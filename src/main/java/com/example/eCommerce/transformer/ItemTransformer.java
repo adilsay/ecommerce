@@ -4,6 +4,7 @@ import com.example.eCommerce.dto.RequestDto.ItemRequestDto;
 import com.example.eCommerce.dto.ResponseDto.ItemResponseDto;
 import com.example.eCommerce.model.Cart;
 import com.example.eCommerce.model.Item;
+import com.example.eCommerce.model.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,5 +35,11 @@ public class ItemTransformer {
             itemResponseDtoArrayList.add(itemResponseDto);
         }
         return itemResponseDtoArrayList;
+    }
+
+    public static void setOrderId(Ordered ordered){
+        for (Item item: ordered.getItemList()){
+            item.setOrder(ordered);
+        }
     }
 }

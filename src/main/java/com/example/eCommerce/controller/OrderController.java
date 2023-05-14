@@ -22,8 +22,8 @@ public class OrderController {
 //    public OrderResponseDto placeOrder(@RequestBody OrderRequestDto orderRequestDto) throws InvalidCartException, InvalidQuentityException, InvalidCardException {
 //        return orderService.placeOrder(orderRequestDto);
 //    }
-    @PostMapping("/placeorder2")
-    public OrderResponseDto placeOrder2(@RequestBody OrderRequestDto orderRequestDto) throws Exception {
-        return orderService.placeOrder2(orderRequestDto);
+    @PostMapping("/placeOrderForCartItems")
+    public OrderResponseDto placeOrderForCartItems(@RequestBody OrderRequestDto orderRequestDto) throws Exception {
+        return orderService.placeOrderForCartItems(orderRequestDto);
     }
 }

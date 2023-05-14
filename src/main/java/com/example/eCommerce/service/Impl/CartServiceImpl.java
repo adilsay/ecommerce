@@ -12,6 +12,8 @@ import com.example.eCommerce.transformer.CartTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class CartServiceImpl implements CartService {
     @Autowired
@@ -28,11 +30,11 @@ public class CartServiceImpl implements CartService {
 //        int newNumberOfItems = cart.getNumberOfItems() + item.getRequiredQuentity();
         cart.setTotalCost(newTotal);
         cart.setNumberOfItems(cart.getItems().size());
-        Cart savedCart = cartRepository.save(cart);
+        cartRepository.save(cart);
 
 //        prepare response dto
-        CartResponseDto cartResponseDto = CartTransformer.CartToCartResponseDto(cart);
-        return cartResponseDto;
+        return CartTransformer.CartToCartResponseDto(cart);
+
 
     }
 

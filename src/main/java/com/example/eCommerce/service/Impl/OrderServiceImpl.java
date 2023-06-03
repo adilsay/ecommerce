@@ -41,51 +41,35 @@ public class OrderServiceImpl implements OrderService {
     CustomerRepository customerRepository;
 
     @Override
-    public OrderResponseDto placeOrder(OrderRequestDto orderRequestDto)
+    public OrderResponseDto placeOrder(OrderRequestDto orderRequestDto,Item item)
             throws InvalidCartException, InvalidQuentityException, InvalidCardException {
 
-//        Cart cart = cartRepository.findById(orderRequestDto.getCartId()).get();
+//      chack item is valid to order
+        if(item.getRequiredQuentity() > item.getProduct().getQuantity() ||
+        item.getProduct().getProductStatus().equals(ProductStatus.OUT_OF_STOCK))
+            throw new InvalidQuentityException("Quantity Not Available Or Product Out of stock");
 
+        updateQuentity(item);
         Customer customer = customerRepository.findById(orderRequestDto.getCustomerId()).get();
-        Cart cart = customer.getCart();
-        if(cart == null || cart.getNumberOfItems() == 0 ) {
-            throw new InvalidCartException("Cart is Empty !!!");
-        }
-        for(Item item: cart.getItems()){
-            if(item.getRequiredQuentity() > item.getProduct().getQuantity())
-                throw new InvalidQuentityException("Product not has required quintity - "+
-                        item.getRequiredQuentity());
-        }
 
         Card card = cardRepository.findByCardNo(orderRequestDto.getCardNo());
         if(card == null || card.getCvv() != orderRequestDto.getCvv() ||
            card.getExpiryDate().before(new Date()) ||
-           card.getCustomer() != cart.getCustomer()) {
-            throw new InvalidCardException("Card is Not Valid !!!");
+           card.getCustomer() != card.getCustomer()) {
+            throw new InvalidCardException("Card is Not Valid !!!" + card.getCardNo());
         }
 
 
-        Ordered order = OrderTransformer.cartToOrderTransformer(cart);
-        order.setCardUsed(CardTransformer.maskCardNumber(card.getCardNo()));
+        Ordered order = OrderTransformer.itemToOrderTransformer(item,customer);
+        order.setCardUsed(card.getCardNo());
+        ItemTransformer.setOrderId(order);
+        customer.getOrderList().add(order);
+
         Ordered savedOrder = orderRepository.save(order);
-        savedOrder.getCustomer().getOrderList().add(order);
-        // empty the cart
-//        cartRepository.save(Cart.builder()
-//                                .items(new ArrayList<>())
-//                                .totalCost(0)
-//                                .numberOfItems(0)
-//                                .build());
-
-        cart.getItems().clear(); // after order is placed empty the list.
-        cart.setTotalCost(0);
-        cart.setNumberOfItems(0);
-
-        for(Item item:savedOrder.getItemList()){
-            updateQuentity(item);
-        }
+//        savedOrder.getCustomer().getOrderList().add(order);
 
         //prepare response dto
-        return OrderTransformer.OrderToOrderResponseDTO(order);
+        return OrderTransformer.OrderToOrderResponseDTO(savedOrder);
 
     }
 

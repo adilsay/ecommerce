@@ -24,11 +24,13 @@ public class CartServiceImpl implements CartService {
     public CartResponseDto saveCart(Item item, Integer customerId) {
         Customer customer = customerRepository.findById(customerId).get();
         Cart cart = customer.getCart();
+        item.setCart(cart);
 
         int newTotal = cart.getTotalCost()+item.getRequiredQuentity()*item.getProduct().getPrice();
 //        cart.getItems().add(item); // this was the bug which adding extra item.
 //        int newNumberOfItems = cart.getNumberOfItems() + item.getRequiredQuentity();
         cart.setTotalCost(newTotal);
+        cart.getItems().add(item);
         cart.setNumberOfItems(cart.getItems().size());
         cartRepository.save(cart);
 

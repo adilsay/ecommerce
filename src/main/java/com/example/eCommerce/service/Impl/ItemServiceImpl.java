@@ -51,11 +51,11 @@ public class ItemServiceImpl implements ItemService {
 //            }
 //        }
         Item item = ItemTransformer.ItemRequestDtoToItem(itemRequestDto);
-        item.setCart(customer.getCart());
         item.setProduct(product);
+//        item.setCart(customer.getCart());
 
-        product.getItems().add(item);
-        Product savedProduct = productRepository.save(product);
+//        product.getItems().add(item);
+//        Product savedProduct = productRepository.save(product);
 //this is the alternate way to return the item
 //        int size = product.getItems().size();
 //        return savedProduct.getItems().get(size-1);
